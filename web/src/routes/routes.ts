@@ -7,13 +7,21 @@ export const allRoles: PerfilUsuario[] = [
   "auditor",
 ];
 
+export const administrativeRoles: PerfilUsuario[] = [
+  "administrador",
+  "operador",
+  "auditor",
+];
+
+export const driverRoles: PerfilUsuario[] = ["motorista"];
+
 export const appRoutes: AppRoute[] = [
   {
     path: "/",
     label: "Dashboard",
     title: "Dashboard administrativo",
     subtitle: "Resumo geral da frota institucional",
-    roles: ["administrador", "operador", "auditor"],
+    roles: administrativeRoles,
     group: "principal",
   },
   {
@@ -21,7 +29,7 @@ export const appRoutes: AppRoute[] = [
     label: "Motorista",
     title: "Painel do motorista",
     subtitle: "Viagens, quilometragem, abastecimentos e ocorrencias",
-    roles: ["motorista", "administrador"],
+    roles: driverRoles,
     group: "principal",
   },
   {
@@ -37,7 +45,7 @@ export const appRoutes: AppRoute[] = [
     label: "Veiculos",
     title: "Veiculos",
     subtitle: "Cadastro, status e historico da frota",
-    roles: ["administrador", "operador", "auditor"],
+    roles: administrativeRoles,
     group: "cadastros",
   },
   {
@@ -45,7 +53,7 @@ export const appRoutes: AppRoute[] = [
     label: "Motoristas",
     title: "Motoristas",
     subtitle: "CNH, status e dados operacionais",
-    roles: ["administrador", "operador", "auditor"],
+    roles: administrativeRoles,
     group: "cadastros",
   },
   {
@@ -61,7 +69,7 @@ export const appRoutes: AppRoute[] = [
     label: "Calendario",
     title: "Calendario de viagens",
     subtitle: "Agenda de viagens, manutencoes e indisponibilidades",
-    roles: ["administrador", "operador", "auditor"],
+    roles: administrativeRoles,
     group: "operacao",
   },
   {
@@ -69,7 +77,7 @@ export const appRoutes: AppRoute[] = [
     label: "Manutencoes",
     title: "Manutencoes",
     subtitle: "Corretivas, preventivas e proximos vencimentos",
-    roles: ["administrador", "operador", "auditor"],
+    roles: administrativeRoles,
     group: "operacao",
   },
   {
@@ -93,7 +101,7 @@ export const appRoutes: AppRoute[] = [
     label: "Relatorios",
     title: "Relatorios",
     subtitle: "Uso, custos, historicos e indicadores",
-    roles: ["administrador", "operador", "auditor"],
+    roles: administrativeRoles,
     group: "gestao",
   },
   {
@@ -112,4 +120,8 @@ export function getRouteByPath(path: string) {
 
 export function canAccessRoute(route: AppRoute, role: PerfilUsuario) {
   return route.roles.includes(role);
+}
+
+export function isAdministrativeRole(role: PerfilUsuario) {
+  return administrativeRoles.includes(role);
 }

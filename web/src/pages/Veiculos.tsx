@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   atualizarVeiculo,
   criarVeiculo,
+  inativarVeiculo,
   listarVeiculos,
 } from "../services/veiculosService";
 import type { StatusVeiculo, Veiculo, VeiculoFormData } from "../types/app";
@@ -370,6 +371,39 @@ export default function Veiculos() {
     }
   }
 
+  async function handleDeactivate(veiculo: Veiculo) {
+    if (veiculo.status === "inativo") {
+      setSuccess("Veiculo ja esta inativo.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Deseja inativar o veiculo ${veiculo.marca} ${veiculo.modelo} (${veiculo.placa})?`
+    );
+
+    if (!confirmed) return;
+
+    setError("");
+    setSuccess("");
+
+    try {
+      const updated = await inativarVeiculo(veiculo.id);
+      setVeiculos((current) =>
+        current.map((item) => (item.id === updated.id ? updated : item))
+      );
+      if (selectedVehicle?.id === updated.id) {
+        setSelectedVehicle(updated);
+      }
+      setSuccess("Veiculo inativado com sucesso.");
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Nao foi possivel inativar o veiculo."
+      );
+    }
+  }
+
   const formInitialData = selectedVehicle
     ? formFromVeiculo(selectedVehicle)
     : emptyForm;
@@ -527,13 +561,23 @@ export default function Veiculos() {
                         <StatusBadge status={veiculo.status} />
                       </td>
                       <td className="px-4 py-4">
-                        <button
-                          type="button"
-                          onClick={() => openEditForm(veiculo)}
-                          className="rounded-lg border border-border px-3 py-2 text-xs font-semibold text-primary-800 transition hover:bg-primary-100"
-                        >
-                          Editar
-                        </button>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openEditForm(veiculo)}
+                            className="rounded-lg border border-border px-3 py-2 text-xs font-semibold text-primary-800 transition hover:bg-primary-100"
+                          >
+                            Editar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void handleDeactivate(veiculo)}
+                            disabled={veiculo.status === "inativo"}
+                            className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            Inativar
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -586,13 +630,23 @@ export default function Veiculos() {
                     </p>
                   )}
 
-                  <button
-                    type="button"
-                    onClick={() => openEditForm(veiculo)}
-                    className="mt-4 w-full rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-800 transition hover:bg-primary-100"
-                  >
-                    Editar
-                  </button>
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openEditForm(veiculo)}
+                      className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-800 transition hover:bg-primary-100"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void handleDeactivate(veiculo)}
+                      disabled={veiculo.status === "inativo"}
+                      className="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Inativar
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>

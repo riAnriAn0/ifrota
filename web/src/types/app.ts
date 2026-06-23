@@ -37,10 +37,14 @@ export type UsuarioPerfil = {
   authUserId: string;
   nome: string;
   email: string;
+  contato?: string;
+  setor?: string;
   tipo: PerfilUsuario;
   fotoUrl?: string;
   ativo: boolean;
 };
+
+export type UsuarioFormData = Omit<UsuarioPerfil, "id">;
 
 export type Veiculo = {
   id: string;

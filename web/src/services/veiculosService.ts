@@ -129,3 +129,20 @@ export async function atualizarVeiculo(
 
   return mapRowToVeiculo(updated);
 }
+
+export async function inativarVeiculo(id: string): Promise<Veiculo> {
+  const client = ensureSupabase();
+
+  const { data: updated, error } = await client
+    .from("veiculos")
+    .update({ status: "inativo" satisfies StatusVeiculo })
+    .eq("id", id)
+    .select(
+      "id, marca, modelo, placa, ano, num_assentos, km_atual, status, observacoes, foto_url"
+    )
+    .single<VeiculoRow>();
+
+  if (error) throw error;
+
+  return mapRowToVeiculo(updated);
+}

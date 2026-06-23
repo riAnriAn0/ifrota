@@ -163,3 +163,11 @@ export async function atualizarAbastecimento(
 
   return mapRowToAbastecimento(updated);
 }
+
+export async function excluirAbastecimento(id: string): Promise<void> {
+  const client = ensureSupabase();
+
+  const { error } = await client.from("abastecimentos").delete().eq("id", id);
+
+  if (error) throw error;
+}

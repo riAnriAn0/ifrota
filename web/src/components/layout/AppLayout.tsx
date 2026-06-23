@@ -20,6 +20,13 @@ const groupLabels: Record<AppRoute["group"], string> = {
   gestao: "Gestao",
 };
 
+const driverGroupLabels: Record<AppRoute["group"], string> = {
+  principal: "Area do motorista",
+  cadastros: "Cadastros",
+  operacao: "Registros da viagem",
+  gestao: "Conta",
+};
+
 function RouteButton({
   route,
   active,
@@ -55,6 +62,8 @@ export default function AppLayout({
   onLogout,
 }: AppLayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const isDriverArea = userRole === "motorista";
+  const activeGroupLabels = isDriverArea ? driverGroupLabels : groupLabels;
   const groupedRoutes = routes.reduce<Record<AppRoute["group"], AppRoute[]>>(
     (groups, route) => {
       groups[route.group].push(route);
@@ -73,6 +82,9 @@ export default function AppLayout({
       <div className="border-b border-border px-5 py-5">
         <img src={logoSgf} alt="IFROTA" className="h-auto w-40" />
         <p className="mt-3 text-xs font-medium uppercase tracking-wide text-text-muted">
+          {isDriverArea ? "Area do motorista" : "Area administrativa"}
+        </p>
+        <p className="mt-1 text-xs font-medium uppercase tracking-wide text-text-muted">
           Perfil: {userRole}
         </p>
       </div>
@@ -84,7 +96,7 @@ export default function AppLayout({
           return (
             <div key={group}>
               <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wide text-text-muted">
-                {groupLabels[group as AppRoute["group"]]}
+                {activeGroupLabels[group as AppRoute["group"]]}
               </p>
               <div className="space-y-1">
                 {groupRoutes.map((route) => (

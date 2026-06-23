@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   atualizarManutencao,
   criarManutencao,
+  excluirManutencao,
   listarManutencoes,
 } from "../services/manutencoesService";
 import { listarVeiculos } from "../services/veiculosService";
@@ -496,6 +497,33 @@ export default function Manutencoes() {
     }
   }
 
+  async function handleDelete(manutencao: Manutencao) {
+    const confirmed = window.confirm(
+      `Deseja excluir a manutencao de ${manutencao.veiculoDescricao}?`
+    );
+
+    if (!confirmed) return;
+
+    setError("");
+    setSuccess("");
+
+    try {
+      await excluirManutencao(manutencao.id);
+      setManutencoes((current) =>
+        current.filter((item) => item.id !== manutencao.id)
+      );
+      if (selectedMaintenance?.id === manutencao.id) closeForm();
+      if (detailMaintenance?.id === manutencao.id) setDetailMaintenance(null);
+      setSuccess("Manutencao excluida com sucesso.");
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Nao foi possivel excluir a manutencao."
+      );
+    }
+  }
+
   const formInitialData = selectedMaintenance
     ? formFromManutencao(selectedMaintenance)
     : { ...emptyForm, tipo: newMaintenanceType };
@@ -814,6 +842,13 @@ export default function Manutencoes() {
                             >
                               Editar
                             </button>
+                            <button
+                              type="button"
+                              onClick={() => void handleDelete(manutencao)}
+                              className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-50"
+                            >
+                              Excluir
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -861,7 +896,7 @@ export default function Manutencoes() {
                       {manutencao.kmRegistro.toLocaleString("pt-BR")} km
                     </p>
 
-                    <div className="mt-4 grid grid-cols-2 gap-2">
+                    <div className="mt-4 grid grid-cols-3 gap-2">
                       <button
                         type="button"
                         onClick={() => setDetailMaintenance(manutencao)}
@@ -875,6 +910,13 @@ export default function Manutencoes() {
                         className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-800 transition hover:bg-primary-100"
                       >
                         Editar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => void handleDelete(manutencao)}
+                        className="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"
+                      >
+                        Excluir
                       </button>
                     </div>
                   </article>

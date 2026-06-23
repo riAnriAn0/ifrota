@@ -164,3 +164,11 @@ export async function atualizarManutencao(
 
   return mapRowToManutencao(updated);
 }
+
+export async function excluirManutencao(id: string): Promise<void> {
+  const client = ensureSupabase();
+
+  const { error } = await client.from("manutencoes").delete().eq("id", id);
+
+  if (error) throw error;
+}

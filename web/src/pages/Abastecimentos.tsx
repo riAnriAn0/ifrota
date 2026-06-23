@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   atualizarAbastecimento,
   criarAbastecimento,
+  excluirAbastecimento,
   listarAbastecimentos,
 } from "../services/abastecimentosService";
 import { listarMotoristas } from "../services/motoristasService";
@@ -459,6 +460,33 @@ export default function Abastecimentos() {
     }
   }
 
+  async function handleDelete(abastecimento: Abastecimento) {
+    const confirmed = window.confirm(
+      `Deseja excluir o abastecimento de ${abastecimento.veiculoDescricao}?`
+    );
+
+    if (!confirmed) return;
+
+    setError("");
+    setSuccess("");
+
+    try {
+      await excluirAbastecimento(abastecimento.id);
+      setAbastecimentos((current) =>
+        current.filter((item) => item.id !== abastecimento.id)
+      );
+      if (selectedFueling?.id === abastecimento.id) closeForm();
+      if (detailFueling?.id === abastecimento.id) setDetailFueling(null);
+      setSuccess("Abastecimento excluido com sucesso.");
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Nao foi possivel excluir o abastecimento."
+      );
+    }
+  }
+
   const formInitialData = selectedFueling
     ? formFromAbastecimento(selectedFueling)
     : emptyForm;
@@ -747,6 +775,13 @@ export default function Abastecimentos() {
                           >
                             Editar
                           </button>
+                          <button
+                            type="button"
+                            onClick={() => void handleDelete(abastecimento)}
+                            className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-50"
+                          >
+                            Excluir
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -800,7 +835,7 @@ export default function Abastecimentos() {
                     </div>
                   </div>
 
-                  <div className="mt-4 grid grid-cols-2 gap-2">
+                  <div className="mt-4 grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => setDetailFueling(abastecimento)}
@@ -814,6 +849,13 @@ export default function Abastecimentos() {
                       className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-800 transition hover:bg-primary-100"
                     >
                       Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void handleDelete(abastecimento)}
+                      className="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"
+                    >
+                      Excluir
                     </button>
                   </div>
                 </article>

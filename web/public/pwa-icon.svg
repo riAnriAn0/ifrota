@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#14532d"/>
+  <rect x="72" y="100" width="368" height="252" rx="44" fill="#f8fafc"/>
+  <path fill="#16a34a" d="M122 230h268v82H122z"/>
+  <path fill="#14532d" d="M156 156h200c26 0 48 21 48 48v26H108v-26c0-27 21-48 48-48Z"/>
+  <circle cx="164" cy="358" r="42" fill="#111827"/>
+  <circle cx="348" cy="358" r="42" fill="#111827"/>
+  <circle cx="164" cy="358" r="18" fill="#e5e7eb"/>
+  <circle cx="348" cy="358" r="18" fill="#e5e7eb"/>
+  <path fill="#f8fafc" d="M156 186h64v44h-64zm90 0h64v44h-64zm90 0h34c8 0 14 6 14 14v30h-48z"/>
+  <text x="256" y="92" fill="#f8fafc" font-family="Arial, Helvetica, sans-serif" font-size="54" font-weight="700" text-anchor="middle">IFROTA</text>
+</svg>

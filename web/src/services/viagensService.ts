@@ -161,3 +161,11 @@ export async function atualizarViagem(
 
   return mapRowToViagem(updated);
 }
+
+export async function excluirViagem(id: string): Promise<void> {
+  const client = ensureSupabase();
+
+  const { error } = await client.from("viagens").delete().eq("id", id);
+
+  if (error) throw error;
+}

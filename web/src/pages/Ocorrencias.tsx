@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   atualizarOcorrencia,
   criarOcorrencia,
+  excluirOcorrencia,
   listarOcorrencias,
   uploadOcorrenciaAnexo,
 } from "../services/ocorrenciasService";
@@ -479,6 +480,33 @@ export default function Ocorrencias() {
     }
   }
 
+  async function handleDelete(ocorrencia: Ocorrencia) {
+    const confirmed = window.confirm(
+      `Deseja excluir esta ocorrencia de ${getTypeLabel(ocorrencia.tipo)}?`
+    );
+
+    if (!confirmed) return;
+
+    setError("");
+    setSuccess("");
+
+    try {
+      await excluirOcorrencia(ocorrencia.id);
+      setOcorrencias((current) =>
+        current.filter((item) => item.id !== ocorrencia.id)
+      );
+      if (selectedOccurrence?.id === ocorrencia.id) closeForm();
+      if (detailOccurrence?.id === ocorrencia.id) setDetailOccurrence(null);
+      setSuccess("Ocorrencia excluida com sucesso.");
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Nao foi possivel excluir a ocorrencia."
+      );
+    }
+  }
+
   const formInitialData = selectedOccurrence
     ? formFromOccurrence(selectedOccurrence)
     : emptyForm;
@@ -718,6 +746,13 @@ export default function Ocorrencias() {
                     className="rounded-lg border border-border px-3 py-2 text-xs font-semibold text-primary-800 transition hover:bg-primary-100"
                   >
                     Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void handleDelete(ocorrencia)}
+                    className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-white"
+                  >
+                    Excluir
                   </button>
                 </div>
               </article>

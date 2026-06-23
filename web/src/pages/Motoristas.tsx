@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   atualizarMotorista,
   criarMotorista,
+  inativarMotorista,
   listarMotoristas,
   listarUsuariosParaMotoristas,
 } from "../services/motoristasService";
@@ -419,6 +420,39 @@ export default function Motoristas() {
     }
   }
 
+  async function handleDeactivate(motorista: Motorista) {
+    if (motorista.status === "inativo") {
+      setSuccess("Motorista ja esta inativo.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Deseja inativar o motorista ${motorista.nome}?`
+    );
+
+    if (!confirmed) return;
+
+    setError("");
+    setSuccess("");
+
+    try {
+      const updated = await inativarMotorista(motorista.id);
+      setMotoristas((current) =>
+        current.map((item) => (item.id === updated.id ? updated : item))
+      );
+      if (selectedDriver?.id === updated.id) {
+        setSelectedDriver(updated);
+      }
+      setSuccess("Motorista inativado com sucesso.");
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Nao foi possivel inativar o motorista."
+      );
+    }
+  }
+
   const formInitialData = selectedDriver
     ? formFromMotorista(selectedDriver)
     : emptyForm;
@@ -632,13 +666,23 @@ export default function Motoristas() {
                         )}
                       </td>
                       <td className="px-4 py-4">
-                        <button
-                          type="button"
-                          onClick={() => openEditForm(motorista)}
-                          className="rounded-lg border border-border px-3 py-2 text-xs font-semibold text-primary-800 transition hover:bg-primary-100"
-                        >
-                          Editar
-                        </button>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openEditForm(motorista)}
+                            className="rounded-lg border border-border px-3 py-2 text-xs font-semibold text-primary-800 transition hover:bg-primary-100"
+                          >
+                            Editar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => void handleDeactivate(motorista)}
+                            disabled={motorista.status === "inativo"}
+                            className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            Inativar
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -689,13 +733,23 @@ export default function Motoristas() {
                     </p>
                   )}
 
-                  <button
-                    type="button"
-                    onClick={() => openEditForm(motorista)}
-                    className="mt-4 w-full rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-800 transition hover:bg-primary-100"
-                  >
-                    Editar
-                  </button>
+                  <div className="mt-4 grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openEditForm(motorista)}
+                      className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-800 transition hover:bg-primary-100"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void handleDeactivate(motorista)}
+                      disabled={motorista.status === "inativo"}
+                      className="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Inativar
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>

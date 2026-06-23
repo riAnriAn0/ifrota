@@ -4,6 +4,7 @@ import { listarVeiculos } from "../services/veiculosService";
 import {
   atualizarViagem,
   criarViagem,
+  excluirViagem,
   listarViagens,
 } from "../services/viagensService";
 import type {
@@ -463,6 +464,31 @@ export default function Viagens() {
     }
   }
 
+  async function handleDelete(viagem: Viagem) {
+    const confirmed = window.confirm(
+      `Deseja excluir a viagem para ${viagem.destino}?`
+    );
+
+    if (!confirmed) return;
+
+    setError("");
+    setSuccess("");
+
+    try {
+      await excluirViagem(viagem.id);
+      setViagens((current) => current.filter((item) => item.id !== viagem.id));
+      if (selectedTrip?.id === viagem.id) closeForm();
+      if (detailTrip?.id === viagem.id) setDetailTrip(null);
+      setSuccess("Viagem excluida com sucesso.");
+    } catch (deleteError) {
+      setError(
+        deleteError instanceof Error
+          ? deleteError.message
+          : "Nao foi possivel excluir a viagem."
+      );
+    }
+  }
+
   const formInitialData = selectedTrip ? formFromViagem(selectedTrip) : emptyForm;
 
   return (
@@ -679,6 +705,13 @@ export default function Viagens() {
                           >
                             Editar
                           </button>
+                          <button
+                            type="button"
+                            onClick={() => void handleDelete(viagem)}
+                            className="rounded-lg border border-red-200 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-50"
+                          >
+                            Excluir
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -726,7 +759,7 @@ export default function Viagens() {
                     </div>
                   </dl>
 
-                  <div className="mt-4 grid grid-cols-2 gap-2">
+                  <div className="mt-4 grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => setDetailTrip(viagem)}
@@ -740,6 +773,13 @@ export default function Viagens() {
                       className="rounded-lg border border-border px-3 py-2 text-sm font-semibold text-primary-800 transition hover:bg-primary-100"
                     >
                       Editar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void handleDelete(viagem)}
+                      className="rounded-lg border border-red-200 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50"
+                    >
+                      Excluir
                     </button>
                   </div>
                 </article>

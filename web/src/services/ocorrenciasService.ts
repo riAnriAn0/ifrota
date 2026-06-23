@@ -187,6 +187,14 @@ export async function atualizarOcorrencia(
   return mapRowToOcorrencia(updated);
 }
 
+export async function excluirOcorrencia(id: string): Promise<void> {
+  const client = ensureSupabase();
+
+  const { error } = await client.from("ocorrencias").delete().eq("id", id);
+
+  if (error) throw error;
+}
+
 export async function uploadOcorrenciaAnexo(
   ocorrenciaId: string,
   file: File
