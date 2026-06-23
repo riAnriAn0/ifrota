@@ -23,7 +23,7 @@ const markerIcon = new L.Icon({
   iconAnchor: [12, 41],
 });
 
-export default function TesteMapaViagem() {
+export default function Mapa() {
   const [origem] = useState<Coordenada>(origemInicial);
   const [destino] = useState<Coordenada>(destinoInicial);
   const [rota, setRota] = useState<Coordenada[]>([]);

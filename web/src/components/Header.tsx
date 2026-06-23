@@ -1,34 +1,56 @@
 type HeaderProps = {
-    adminImg: string;
-    adminName: string;
-    onMenuClick: () => void;
-    onNavigate: (route: string) => void;
+  title: string;
+  subtitle?: string;
+  userName?: string;
+  onMenuClick: () => void;
 };
 
-export default function Header({ adminImg, adminName, onMenuClick, onNavigate }: HeaderProps) {
-    return (
-        <header className="rounded-b-md bg-primary-800 w-full h-20 py-4 px-4 text-white shadow-lg shadow-black/25">
-            <div className=" items-start justify-between">
-                <div className="flex items-center gap-4">
-                    <img src={adminImg} alt={adminName} className="w-10 h-10 rounded-full" />
-                    <div className="flex flex-col">
-                        <h1 className="text-md font-semibold">
-                            Olá, {adminName}
-                        </h1>
-                        <p className="mt-1 text-md text-white/80">
-                            Bem-vindo ao dashboard
-                        </p>
-                    </div>
-                </div>
+export default function Header({
+  title,
+  subtitle,
+  userName,
+  onMenuClick,
+}: HeaderProps) {
+  const initials = (userName || "IF")
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
-            <button
-                type="button"
-                // onClick={onMenuClick}
-                aria-label="Abrir menu"
-                className="rounded-lg p-2 text-white transition hover:bg-white/10"
-            >
-            </button>
-            </div>
-        </header>
-    )
+  return (
+    <header className="sticky top-0 z-20 border-b border-border bg-surface/95 px-4 py-3 shadow-sm backdrop-blur lg:px-6">
+      <div className="flex items-center justify-between gap-4">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          aria-label="Abrir menu"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-border text-primary-800 transition hover:bg-primary-100 lg:hidden"
+        >
+          <span className="text-xl leading-none">=</span>
+        </button>
+
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate text-lg font-semibold text-text-main sm:text-xl">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="truncate text-sm text-text-muted">{subtitle}</p>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="hidden text-right sm:block">
+            <p className="text-sm font-medium text-text-main">
+              {userName || "Usuario"}
+            </p>
+            <p className="text-xs text-text-muted">IFROTA</p>
+          </div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-700 text-sm font-semibold text-white">
+            {initials}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
 }
