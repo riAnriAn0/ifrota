@@ -1,24 +1,21 @@
+import Header from "./components/Header";
 import AdminHome from "./pages/AdminHome";
 import Login from "./pages/Login";
-import TesteMapaViagem from "./pages/Mapa";
+import TesteMapaViagem from "./pages/TesteMapaViagem";
 
-function App() {
+export default function App() {
   return (
-     <>
+    <>
+      <Header />
       {/* <Login
         onLogin={(data) => {
           console.log("Login enviado:", data);
         }}
       /> */}
-      {/* <AdminHome
-        adminName="Admin"
-        onMenuClick={() => console.log("Abrir menu")}
-        onNavigate={(route) => console.log("Ir para:", route)}
-      /> */}
-      <TesteMapaViagem />
+      <AdminHome/>
+      {/* <TesteMapaViagem /> */}
     </>
   );
 }
 
-export default App;
 
