@@ -218,65 +218,133 @@ begin
     ativo,
     data_criacao
   )
-  values
-    (
-      admin_usuario_id,
-      admin_auth_id,
-      'Administrador IFROTA',
-      'admin@ifrota.local',
-      '(99) 0000-0001',
-      'Direcao Administrativa',
-      'administrador',
-      null,
-      true,
-      now()
-    ),
-    (
-      operador_usuario_id,
-      operador_auth_id,
-      'Operador de Frota',
-      'operador@ifrota.local',
-      '(99) 0000-0002',
-      'Transporte',
-      'operador',
-      null,
-      true,
-      now()
-    ),
-    (
-      motorista_usuario_id,
-      motorista_auth_id,
-      'Joao Motorista',
-      'motorista@ifrota.local',
-      '(99) 0000-0003',
-      'Transporte',
-      'motorista',
-      null,
-      true,
-      now()
-    ),
-    (
-      auditor_usuario_id,
-      auditor_auth_id,
-      'Auditor IFROTA',
-      'auditor@ifrota.local',
-      '(99) 0000-0004',
-      'Controle Interno',
-      'auditor',
-      null,
-      true,
-      now()
-    )
-  on conflict (id) do update
+  values (
+    admin_usuario_id,
+    admin_auth_id,
+    'Administrador IFROTA',
+    'admin@ifrota.local',
+    '(99) 0000-0001',
+    'Direcao Administrativa',
+    'administrador',
+    null,
+    true,
+    now()
+  )
+  on conflict (auth_user_id) where auth_user_id is not null do update
   set
-    auth_user_id = excluded.auth_user_id,
     nome = excluded.nome,
     email = excluded.email,
     contato = excluded.contato,
     setor = excluded.setor,
     tipo = excluded.tipo,
     foto_url = excluded.foto_url,
-    ativo = excluded.ativo;
+    ativo = excluded.ativo
+  returning id into admin_usuario_id;
+
+  insert into public.usuarios (
+    id,
+    auth_user_id,
+    nome,
+    email,
+    contato,
+    setor,
+    tipo,
+    foto_url,
+    ativo,
+    data_criacao
+  )
+  values (
+    operador_usuario_id,
+    operador_auth_id,
+    'Operador de Frota',
+    'operador@ifrota.local',
+    '(99) 0000-0002',
+    'Transporte',
+    'operador',
+    null,
+    true,
+    now()
+  )
+  on conflict (auth_user_id) where auth_user_id is not null do update
+  set
+    nome = excluded.nome,
+    email = excluded.email,
+    contato = excluded.contato,
+    setor = excluded.setor,
+    tipo = excluded.tipo,
+    foto_url = excluded.foto_url,
+    ativo = excluded.ativo
+  returning id into operador_usuario_id;
+
+  insert into public.usuarios (
+    id,
+    auth_user_id,
+    nome,
+    email,
+    contato,
+    setor,
+    tipo,
+    foto_url,
+    ativo,
+    data_criacao
+  )
+  values (
+    motorista_usuario_id,
+    motorista_auth_id,
+    'Joao Motorista',
+    'motorista@ifrota.local',
+    '(99) 0000-0003',
+    'Transporte',
+    'motorista',
+    null,
+    true,
+    now()
+  )
+  on conflict (auth_user_id) where auth_user_id is not null do update
+  set
+    nome = excluded.nome,
+    email = excluded.email,
+    contato = excluded.contato,
+    setor = excluded.setor,
+    tipo = excluded.tipo,
+    foto_url = excluded.foto_url,
+    ativo = excluded.ativo
+  returning id into motorista_usuario_id;
+
+  insert into public.usuarios (
+    id,
+    auth_user_id,
+    nome,
+    email,
+    contato,
+    setor,
+    tipo,
+    foto_url,
+    ativo,
+    data_criacao
+  )
+  values (
+    auditor_usuario_id,
+    auditor_auth_id,
+    'Auditor IFROTA',
+    'auditor@ifrota.local',
+    '(99) 0000-0004',
+    'Controle Interno',
+    'auditor',
+    null,
+    true,
+    now()
+  )
+  on conflict (auth_user_id) where auth_user_id is not null do update
+  set
+    nome = excluded.nome,
+    email = excluded.email,
+    contato = excluded.contato,
+    setor = excluded.setor,
+    tipo = excluded.tipo,
+    foto_url = excluded.foto_url,
+    ativo = excluded.ativo
+  returning id into auditor_usuario_id;
 
   insert into public.admins (id, usuario_id, sub_setor, nivel_acesso)
   values
@@ -765,3 +833,22 @@ begin
     tipo = excluded.tipo,
     lida = excluded.lida;
 end $$;
+
+select 'usuarios' as tabela, count(*) as total from public.usuarios
+union all
+select 'motoristas', count(*) from public.motoristas
+union all
+select 'veiculos', count(*) from public.veiculos
+union all
+select 'viagens', count(*) from public.viagens
+union all
+select 'manutencoes', count(*) from public.manutencoes
+union all
+select 'abastecimentos', count(*) from public.abastecimentos
+union all
+select 'ocorrencias', count(*) from public.ocorrencias
+union all
+select 'calendario_eventos', count(*) from public.calendario_eventos
+union all
+select 'notificacoes', count(*) from public.notificacoes
+order by tabela;

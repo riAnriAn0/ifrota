@@ -7,4 +7,11 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  // Adicione este bloco server abaixo:
+  server: {
+    hmr: {
+      host: 'localhost',
+      protocol: 'ws',
+    },
+  },
 });
